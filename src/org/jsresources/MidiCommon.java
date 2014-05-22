@@ -1,7 +1,7 @@
 package org.jsresources;
 
 //Found on: http://www.jsresources.org/examples/MidiCommon.java.html
-
+//I(sinius15) edited this file so it is usable with the Java-Launchpad-Library
 /*
  *	MidiCommon.java
  *
@@ -38,158 +38,95 @@ package org.jsresources;
  */
 
 /*
-|<---            this code is formatted to fit into 80 columns             --->|
-*/
+ |<---            this code is formatted to fit into 80 columns             --->|
+ */
+
+import java.util.ArrayList;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 
-
-
-/** Utility methods for MIDI examples.
-*/
-public class MidiCommon
-{
-	/**	
-		todo: flag long
+/** Utility methods for MIDI examples. */
+public class MidiCommon {
+	
+	/**
+	 * @param bForInput if you want to receive input devices
+	 * @param bForOutput if you want to receive output devices
+	 * @return a String array with all the avalable midi devices
 	 */
-	public static void listDevices(boolean bForInput,
-					      boolean bForOutput)
-	{
-		listDevices(bForInput, bForOutput, false);
-	}
-
-
-
-	public static void listDevices(boolean bForInput,
-					      boolean bForOutput,
-					      boolean bVerbose)
-	{
-		if (bForInput && !bForOutput)
-		{
-			out("Available MIDI IN Devices:");
-		}
-		else if (!bForInput && bForOutput)
-		{
-			out("Available MIDI OUT Devices:");
-		}
-		else
-		{
-			out("Available MIDI Devices:");
-		}
-
-		MidiDevice.Info[]	aInfos = MidiSystem.getMidiDeviceInfo();
-		for (int i = 0; i < aInfos.length; i++)
-		{
-			try
-			{
-				MidiDevice	device = MidiSystem.getMidiDevice(aInfos[i]);
-				boolean		bAllowsInput = (device.getMaxTransmitters() != 0);
-				boolean		bAllowsOutput = (device.getMaxReceivers() != 0);
-				if ((bAllowsInput && bForInput) ||
-				    (bAllowsOutput && bForOutput))
-				{
-					if (bVerbose)
-					{
-					out("" + i + "  "
-						+ (bAllowsInput?"IN ":"   ")
-						+ (bAllowsOutput?"OUT ":"    ")
-						+ aInfos[i].getName() + ", "
-						+ aInfos[i].getVendor() + ", "
-						+ aInfos[i].getVersion() + ", "
-						+ aInfos[i].getDescription());
-					}
-					else
-					{
-					out("" + i + "  " + aInfos[i].getName());
-					}
+	public static String[] listDevices(boolean bForInput, boolean bForOutput) {
+		ArrayList<String> out = new ArrayList<>();
+		MidiDevice.Info[] aInfos = MidiSystem.getMidiDeviceInfo();
+		for (int i = 0; i < aInfos.length; i++) {
+			try {
+				MidiDevice device = MidiSystem.getMidiDevice(aInfos[i]);
+				boolean bAllowsInput = (device.getMaxTransmitters() != 0);
+				boolean bAllowsOutput = (device.getMaxReceivers() != 0);
+				if ((bAllowsInput && bForInput) || (bAllowsOutput && bForOutput)) {
+					out.add(aInfos[i].getName());
 				}
-			}
-			catch (MidiUnavailableException e)
-			{
+			} catch (MidiUnavailableException e) {
 				// device is obviously not available...
-				// out(e);
 			}
 		}
-		if (aInfos.length == 0)
-		{
-			out("[No devices available]");
-		}
+		return out.toArray(new String[out.size()]);
 	}
-
-
-
-	/** Retrieve a MidiDevice.Info for a given name.
-
-	This method tries to return a MidiDevice.Info whose name
-	matches the passed name. If no matching MidiDevice.Info is
-	found, null is returned.  If bForOutput is true, then only
-	output devices are searched, otherwise only input devices.
-
-	@param strDeviceName the name of the device for which an info
-	object should be retrieved.
-
-	@param bForOutput If true, only output devices are
-	considered. If false, only input devices are considered.
-
-	@return A MidiDevice.Info object matching the passed device
-	name or null if none could be found.
-
-	*/
-	public static MidiDevice.Info getMidiDeviceInfo(String strDeviceName, boolean bForOutput)
-	{
-		MidiDevice.Info[]	aInfos = MidiSystem.getMidiDeviceInfo();
-		for (int i = 0; i < aInfos.length; i++)
-		{
-			if (aInfos[i].getName().equals(strDeviceName))
-			{
-				try
-				{
+	
+	/**
+	 * Retrieve a MidiDevice.Info for a given name.
+	 * 
+	 * This method tries to return a MidiDevice.Info whose name matches the
+	 * passed name. If no matching MidiDevice.Info is found, null is returned.
+	 * If bForOutput is true, then only output devices are searched, otherwise
+	 * only input devices.
+	 * 
+	 * @param strDeviceName
+	 *            the name of the device for which an info object should be
+	 *            retrieved.
+	 * @param bForOutput
+	 *            If true, only output devices are considered. If false, only
+	 *            input devices are considered.
+	 * @return A MidiDevice.Info object matching the passed device name or null
+	 *         if none could be found.
+	 */
+	public static MidiDevice.Info getMidiDeviceInfo(String strDeviceName, boolean bForOutput) {
+		MidiDevice.Info[] aInfos = MidiSystem.getMidiDeviceInfo();
+		for (int i = 0; i < aInfos.length; i++) {
+			if (aInfos[i].getName().equals(strDeviceName)) {
+				try {
 					MidiDevice device = MidiSystem.getMidiDevice(aInfos[i]);
-					boolean	bAllowsInput = (device.getMaxTransmitters() != 0);
-					boolean	bAllowsOutput = (device.getMaxReceivers() != 0);
-					if ((bAllowsOutput && bForOutput) || (bAllowsInput && !bForOutput))
-					{
+					boolean bAllowsInput = (device.getMaxTransmitters() != 0);
+					boolean bAllowsOutput = (device.getMaxReceivers() != 0);
+					if ((bAllowsOutput && bForOutput) || (bAllowsInput && !bForOutput)) {
 						return aInfos[i];
 					}
-				}
-				catch (MidiUnavailableException e)
-				{
+				} catch (MidiUnavailableException e) {
 					// todo:
 				}
 			}
 		}
 		return null;
 	}
-
-
-	/** 
-	 * Retrieve a MidiDevice.Info by index number.
-	 * This method returns a MidiDevice.Info whose index
-	 * is specified as parameter. This index matches the
-	 * number printed in the listDevicesAndExit method.
-	 * If index is too small or too big, null is returned.
-	 *
-	 * @param index the index of the device to be retrieved
-	 * @return A MidiDevice.Info object of the specified index
-	 *         or null if none could be found.
+	
+	/**
+	 * Retrieve a MidiDevice.Info by index number. This method returns a
+	 * MidiDevice.Info whose index is specified as parameter. This index matches
+	 * the number printed in the listDevicesAndExit method. If index is too
+	 * small or too big, null is returned.
+	 * 
+	 * @param index
+	 *            the index of the device to be retrieved
+	 * @return A MidiDevice.Info object of the specified index or null if none
+	 *         could be found.
 	 */
-	public static MidiDevice.Info getMidiDeviceInfo(int index)
-	{
-		MidiDevice.Info[]	aInfos = MidiSystem.getMidiDeviceInfo();
+	public static MidiDevice.Info getMidiDeviceInfo(int index) {
+		MidiDevice.Info[] aInfos = MidiSystem.getMidiDeviceInfo();
 		if ((index < 0) || (index >= aInfos.length)) {
 			return null;
 		}
 		return aInfos[index];
 	}
-
-	private static void out(String strMessage)
-	{
-		System.out.println(strMessage);
-	}
 }
-
-
 
 /*** MidiCommon.java ***/
