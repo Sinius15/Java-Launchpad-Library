@@ -66,7 +66,7 @@ public class LaunchpadPatternFactory extends LaunchpadPattern implements LaunchL
 	}
 	
 	/**
-	 * DO NOT USE! THIS IS A IMPLEMENTATION!
+	 * DO NOT CALL! THIS IS A IMPLEMENTATION!
 	 * 
 	 * @author Sinius15
 	 */

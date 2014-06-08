@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import org.jsresources.MidiCommon;
+
 import com.sinius15.launchpad.LaunchListener;
 import com.sinius15.launchpad.Launchpad;
 import com.sinius15.launchpad.LaunchpadPattern;
@@ -18,6 +20,9 @@ public class LaunchTester implements LaunchListener{
 	
 	public LaunchTester(){
 		try {
+			for(String s:MidiCommon.listDevices(true, true)) {
+				System.out.println(s);
+			}
 			s = new Launchpad(name);
 			s.addListener(this);
 			s.open();
@@ -56,11 +61,11 @@ public class LaunchTester implements LaunchListener{
 				for (int i = 0; i < txt.length(); i++){
 					char c = txt.charAt(i); 
 
-					System.out.println("case '"+c+"': return new LaunchpadPattern(LETTER_CAPITAL_"+(""+c).toUpperCase()+");");
+					System.out.println("case '"+c+"': return new LaunchpadPattern(NUMBER_"+(""+c).toUpperCase()+");");
 				}
 			}
 			if(what == 4){
-				s.showText("Java Launchpad Library (JLPL)".toUpperCase(), 500, Launchpad.COLOUR_GREEN_FULL);
+				s.showText("Hello world".toUpperCase(), 500, Launchpad.COLOUR_GREEN_FULL);
 			}
 			if(what == 5){
 				Scanner scanner = new Scanner(System.in);
@@ -70,8 +75,8 @@ public class LaunchTester implements LaunchListener{
 				String txt;
 				while(!(txt = scanner.nextLine()).equals("quit")){
 					LaunchpadPattern p = fac.stopRecording();
-					System.out.println("public static final int[][] LETTER_SMALL_"+txt.toUpperCase()+" = "+p.toString()+";");
-					cases.add("case '"+txt+"': return new LaunchpadPattern(LETTER_SMALL_"+txt.toUpperCase()+");");
+					System.out.println("public static final int[][] NUMBER_"+txt.toUpperCase()+" = "+p.toString()+";");
+					cases.add("case '"+txt+"': return new LaunchpadPattern(NUMBER_"+txt.toUpperCase()+");");
 					fac = new LaunchpadPatternFactory(s);
 					fac.startRecording();
 				}
@@ -83,6 +88,9 @@ public class LaunchTester implements LaunchListener{
 				}
 				scanner.close();
 			}
+			if(what == 6){
+				System.in.read();
+			}
 
 			s.close();
 			
@@ -93,7 +101,8 @@ public class LaunchTester implements LaunchListener{
 
 	@Override
 	public void onButtonDown(int row, int colomn) {
-		//s.setLedOn(colomn, row, Launchpad.COLOUR_AMBER_FULL);
+		if(what == 6)
+			s.setLedOn(colomn, row, Launchpad.COLOUR_RED_FULL);
 		if(what == 1)
 			s.showPattern(patt);
 	}
@@ -102,7 +111,8 @@ public class LaunchTester implements LaunchListener{
 	public void onButtonUp(int row, int colomn) {
 		if(what == 1)
 			s.reset();
-		//s.setLedOff(colomn, row);
+		if(what == 6)
+			s.setLedOff(colomn, row);
 	}
 	
 	public static void main(String[] args) {

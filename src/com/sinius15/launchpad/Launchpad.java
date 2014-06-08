@@ -16,7 +16,7 @@ import javax.sound.midi.Transmitter;
 
 import org.jsresources.MidiCommon;
 
-public class Launchpad implements Receiver {
+public class Launchpad implements Receiver{
 	
 	private ArrayList<LaunchListener> listeners = new ArrayList<>();
 	private MidiDevice inputDevice = null, outputDevice = null;
@@ -105,7 +105,10 @@ public class Launchpad implements Receiver {
 	public void setLedOn(int colomn, int row, int colour) {
 		try {
 			ShortMessage m = new ShortMessage();
-			m.setMessage(ShortMessage.NOTE_ON, 0, coordToData(colomn, row), colour);
+			if(row == 0)
+				m.setMessage(ShortMessage.CONTROL_CHANGE, 0, coordToData(colomn, row), colour);
+			else
+				m.setMessage(ShortMessage.NOTE_ON, 0, coordToData(colomn, row), colour);
 			sendMessage(m);
 		} catch (InvalidMidiDataException e) {
 			e.printStackTrace();
@@ -125,11 +128,12 @@ public class Launchpad implements Receiver {
 	 * @author Sinius15
 	 */
 	public void setLedOff(int colomn, int row) {
-		if (row == 0)
-			return;
 		try {
 			ShortMessage m = new ShortMessage();
-			m.setMessage(ShortMessage.NOTE_OFF, 0, coordToData(colomn, row), 0);
+			if(row == 0)
+				m.setMessage(ShortMessage.CONTROL_CHANGE, 0, coordToData(colomn, row), COLOUR_OFF);
+			else
+				m.setMessage(ShortMessage.NOTE_OFF, 0, coordToData(colomn, row), COLOUR_OFF);
 			sendMessage(m);
 		} catch (InvalidMidiDataException e) {
 			e.printStackTrace();
@@ -372,8 +376,6 @@ public class Launchpad implements Receiver {
 				else
 					l.onButtonDown(row, colomn);
 			}
-			// System.out.println("Data1: " + m.getData1() + " row:" + row +
-			// " col:" + colomn + " newData:" + coordToData(colomn, row));
 		}
 	}
 	
