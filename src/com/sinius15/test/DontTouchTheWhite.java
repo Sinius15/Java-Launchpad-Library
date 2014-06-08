@@ -13,7 +13,7 @@ public class DontTouchTheWhite implements Runnable, LaunchListener{
 	
 	//9 rows, 8 cols
 	boolean[][] grid = new boolean[9][8];
-	double speed = 500;
+	int speed = 500;
 	int score = 0;
 	
 	public DontTouchTheWhite(String launchpadName){
@@ -47,6 +47,8 @@ public class DontTouchTheWhite implements Runnable, LaunchListener{
 	public void onButtonDown(int row, int colomn) {
 		if(colomn == 8)
 			return;
+		if(row == 0)
+			return;
 		if(grid[row][colomn]){
 			grid[row][colomn] = false;
 			pad.setLedOff(colomn, row);
@@ -67,9 +69,7 @@ public class DontTouchTheWhite implements Runnable, LaunchListener{
 
 
 	@Override
-	public void onButtonUp(int row, int colomn) {
-		
-	}
+	public void onButtonUp(int row, int colomn) {}
 	
 	@Override
 	public void run() {
@@ -84,9 +84,9 @@ public class DontTouchTheWhite implements Runnable, LaunchListener{
 					break mainLoop;
 			grid = newGrid;
 			updateLights();
-			speed -= 2;
+			speed -= 5;
 			try {
-				Thread.sleep((long)speed);
+				Thread.sleep(speed);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -100,9 +100,8 @@ public class DontTouchTheWhite implements Runnable, LaunchListener{
 	public static int randomNumber(int min, int max){
 		return min + (int)(Math.random() * ((max - min) + 1));
 	}
-
+	
 	public static void main(String[] args) {
 		new DontTouchTheWhite("Launchpad S");
 	}
-	
 }

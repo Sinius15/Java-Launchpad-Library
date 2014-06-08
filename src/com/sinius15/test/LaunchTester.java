@@ -13,14 +13,14 @@ import com.sinius15.launchpad.LaunchpadPatternFactory;
 
 public class LaunchTester implements LaunchListener{
 
-	public static String name = "Launchpad S";
+	public static final String name = "Launchpad S";
 	Launchpad s;
 	LaunchpadPattern patt;
-	int what = 5;
+	int what = 4;
 	
 	public LaunchTester(){
 		try {
-			for(String s:MidiCommon.listDevices(true, true)) {
+			for(String s: MidiCommon.listDevices(true, true)) {
 				System.out.println(s);
 			}
 			s = new Launchpad(name);
@@ -30,7 +30,7 @@ public class LaunchTester implements LaunchListener{
 				LaunchpadPatternFactory fac = new LaunchpadPatternFactory(s);
 				fac.startRecording();
 				
-				Scanner scanner = new Scanner(System.in);
+				Scanner scanner = new Scanner(System.in, "UTF-8");
 				String text = scanner.nextLine();
 				
 				LaunchpadPattern p = fac.stopRecording();
@@ -91,7 +91,16 @@ public class LaunchTester implements LaunchListener{
 			if(what == 6){
 				System.in.read();
 			}
-
+			if(what == 7){
+				LaunchpadPatternFactory fac = new LaunchpadPatternFactory(s);
+				fac.startRecording();
+				System.in.read();
+				LaunchpadPattern pat = fac.stopRecording();
+				s.reset();
+				Thread.sleep(1000);
+				s.showPattern(pat);
+				Thread.sleep(1000);
+			}
 			s.close();
 			
 		} catch (Exception e) {

@@ -9,18 +9,13 @@ import java.util.Arrays;
  * @author Sinius15
  * @see www.sinius15.com
  */
-public class LaunchpadPatternFactory extends LaunchpadPattern implements LaunchListener {
+public class LaunchpadPatternFactory implements LaunchListener {
 	
-	/**
-	 * needs serail because it extends LaunchpadPattern withch is serializable.
-	 * 
-	 * @author Sinius15
-	 */
-	private static final long serialVersionUID = 2148080826341765869L;
 	Launchpad l;
 	// this is the actual number stored in the data array. -1=off,
 	// velocity=colour codes
-	int selectedColour = 1;
+	int selectedColour = -1;
+	int[][] data = new int[9][9];
 	
 	/**
 	 * Creates a new launchpadPatternFactory.
@@ -31,7 +26,11 @@ public class LaunchpadPatternFactory extends LaunchpadPattern implements LaunchL
 	 */
 	public LaunchpadPatternFactory(Launchpad launchpad) {
 		this.l = launchpad;
-		Arrays.fill(data, new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1 });
+		for (int[] a : data) {
+			Arrays.fill(a, -1);
+		}
+		// Arrays.fill(data, new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1 });
+		// /\ This does not work!~!!! (i do not know why it does not work)
 	}
 	
 	/**
@@ -76,12 +75,13 @@ public class LaunchpadPatternFactory extends LaunchpadPattern implements LaunchL
 			selectedColour = rowToColour(row - 1);
 			return;
 		}
-		if (selectedColour != -1) {
-			l.setLedOn(colomn, row, selectedColour);
-			data[colomn][row] = selectedColour;
-		} else {
+		if (selectedColour == -1) {
 			l.setLedOff(colomn, row);
 			data[colomn][row] = -1;
+		} else {
+			System.out.println(colomn);
+			l.setLedOn(colomn, row, selectedColour);
+			data[colomn][row] = selectedColour;
 		}
 		
 	}

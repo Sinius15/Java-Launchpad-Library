@@ -314,10 +314,10 @@ public class Launchpad implements Receiver{
 	 * @author Sinius15
 	 */
 	public void showPattern(LaunchpadPattern pattern) {
-		for (int x = 0; x < 9; x++) {
-			for (int y = 0; y < 9; y++) {
-				if (pattern.data[x][y] != -1)
-					setLedOn(x, y, pattern.data[x][y]);
+		for (int row = 0; row < 9; row++) {
+			for (int col = 0; col < 9; col++) {
+				if (pattern.data[row][col] != -1)
+					setLedOn(row, col, pattern.data[row][col]);
 			}
 		}
 	}
@@ -330,10 +330,10 @@ public class Launchpad implements Receiver{
 	 * @author Sinius15
 	 */
 	public void showPattern(LaunchpadPattern pattern, int colour){
-		for (int x = 0; x < 9; x++) {
-			for (int y = 0; y < 9; y++) {
-				if (pattern.data[x][y] != -1)
-					setLedOn(x, y, colour);
+		for (int row = 0; row < 9; row++) {
+			for (int col = 0; col < 9; col++) {
+				if (pattern.data[row][col] != -1)
+					setLedOn(row, col, colour);
 			}
 		}
 	}
