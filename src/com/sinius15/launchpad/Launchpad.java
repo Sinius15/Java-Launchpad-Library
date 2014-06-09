@@ -331,7 +331,7 @@ public class Launchpad implements Receiver{
 		for (int row = 0; row < 9; row++) {
 			for (int col = 0; col < 9; col++) {
 				if (pattern.data[row][col] != -1){
-					if(row+rowShift > 8 || col+colShift > 8)
+					if(row+rowShift > 8 || col+colShift > 8 || col+colShift > 8 || col+colShift < 0)
 						continue;
 					else
 						setLedOn(col+colShift, row+rowShift, pattern.data[row][col]);
@@ -353,9 +353,9 @@ public class Launchpad implements Receiver{
 	 * This function shows a String of text on the launchpad. It uses the default LaunchpadPatterns from the LaunchpadResources class.
 	 * @param text the text to show.
 	 * @param speed the time to show each letter in mili-seconds
-	 * @param colour the color to show the text in. If colour is -1 than the original colour is used.
+	 * @param color the color to show the text in. If colour is -1 than the original colour is used.
 	 */
-	public void showText(String text, int speed, int colour) {
+	public void showText(String text, int speed, int color) {
 		LaunchpadPattern p;
 		for (int i = 0; i < text.length(); i++) {
 			char c = text.charAt(i);
@@ -363,12 +363,45 @@ public class Launchpad implements Receiver{
 			if (p == null) 
 				throw new RuntimeErrorException(null, "Could not find character " + c);
 			reset();
-			if(colour != -1)
-				p = p.setColor(colour);
+			if(color != -1)
+				p = p.setColor(color);
 			showPattern(p);
 			try {
 				Thread.sleep(speed);
 			} catch (InterruptedException e) {}
+		}
+	}
+
+	/**
+	 * This funciton uses "Rapid Subsequent Updates" to turn on all the lights on the launchpad as fast as possible.
+	 * By using this rapid method, there 40 messages sent to the launchpad, instead of 80 (when you turn on all
+	 * the lights on one by one). If a midi-message is sent to the launchpad on channel 0 and this method is executing,
+	 * than this method will probably fail. So make sure this method is the only one sending messages oterwhise your are f***ed 
+	 * @param color The color to set the launchpad
+	 */
+	public void setFullLaunchpadColor(int color){
+		try {
+			ShortMessage m = new ShortMessage();
+			m.setMessage(ShortMessage.NOTE_ON, 2, color, color);
+			for(int i = 0; i<40; i++)
+				sendMessage(m);
+		} catch (InvalidMidiDataException e) {
+			e.printStackTrace();
+		}
+		
+		
+	}
+	
+	/**
+	 * This method first resets the launchpad, after that it shows
+	 * all the colors avalable in the middle of the pad.
+	 */
+	public void showColorPallette(){
+		reset();
+		for(int x = 0; x < 4; x++){
+			for(int y = 0; y < 4; y++){
+				setLedOn(x+2, y+3, Launchpad.calculateColour(x, y));
+			}
 		}
 	}
 	

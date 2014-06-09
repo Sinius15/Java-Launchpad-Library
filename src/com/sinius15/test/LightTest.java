@@ -32,6 +32,7 @@ public class LightTest implements LaunchListener{
 			e.printStackTrace();
 		}
 		pad.addListener(this);
+		pad.setFullLaunchpadColor(Launchpad.COLOUR_AMBER_FULL);
 		try {
 			System.in.read();
 		} catch (IOException e) {
@@ -43,13 +44,42 @@ public class LightTest implements LaunchListener{
 
 	
 	@Override
-	public void onButtonDown(int row, int colomn) {
-		pad.showPattern(new LaunchpadPattern(EFFECT_STAR), row-1, colomn-1);
+	public void onButtonDown(int row, final int colomn) {
+		if(row == 8){
+			new Thread(new Runnable() {
+				int curRow = 8;
+				int col = colomn;
+				@Override
+				public void run() {
+					do{
+						pad.setLedOn(col, curRow, Launchpad.COLOUR_GREEN_FULL);
+						try {
+							Thread.sleep(50);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						curRow--;
+						pad.setLedOff(col, curRow+1);
+					}while(curRow >= 0);
+					
+				}
+			}).start();
+		}else if(row == 0){
+			if(colomn == 0)
+				pad.setFullLaunchpadColor(Launchpad.COLOUR_GREEN_FULL);
+			if(colomn == 1)
+				pad.showColorPallette();
+			
+		}else{
+			pad.showPattern(new LaunchpadPattern(EFFECT_STAR), row-1, colomn-1);
+		}
+		
 	}
 
 	@Override
 	public void onButtonUp(int row, int colomn) {
-		pad.showPattern(new LaunchpadPattern(EFFECT_STAR).setColor(Launchpad.COLOUR_OFF), row-1, colomn-1);
+		if(row != 0 && row != 8)
+			pad.showPattern(new LaunchpadPattern(EFFECT_STAR).setColor(Launchpad.COLOUR_OFF), row-1, colomn-1);
 		
 	}
 	

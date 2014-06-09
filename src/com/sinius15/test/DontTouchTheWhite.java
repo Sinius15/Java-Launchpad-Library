@@ -1,8 +1,6 @@
 package com.sinius15.test;
 
 import javax.sound.midi.MidiUnavailableException;
-import javax.swing.JFrame;
-import javax.swing.UIManager;
 
 import com.sinius15.launchpad.LaunchListener;
 import com.sinius15.launchpad.Launchpad;
