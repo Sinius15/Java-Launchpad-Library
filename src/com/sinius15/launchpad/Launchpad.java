@@ -89,7 +89,6 @@ public class Launchpad implements Receiver{
 	
 	/**
 	 * Turns on a led on the launchpad.<br>
-	 * Remember: It is not possible to turn on/off leds on the top row!
 	 * 
 	 * @param colomn
 	 *            the colomn on the launchpad where the left colomn is 0 and the
@@ -323,17 +322,20 @@ public class Launchpad implements Receiver{
 	}
 	
 	/**
-	 * This funciton sets the lights on the launchpad to the selected pattern. It sets the whole pattern to the selected colour.
+	 * This funciton sets the lights on the launchpad to the selected pattern
 	 * 
 	 * @param pattern the pattern to show
-	 * @param colour the colour
 	 * @author Sinius15
 	 */
-	public void showPattern(LaunchpadPattern pattern, int colour){
+	public void showPattern(LaunchpadPattern pattern, int rowShift, int colShift) {
 		for (int row = 0; row < 9; row++) {
 			for (int col = 0; col < 9; col++) {
-				if (pattern.data[row][col] != -1)
-					setLedOn(row, col, colour);
+				if (pattern.data[row][col] != -1){
+					if(row+rowShift > 8 || col+colShift > 8)
+						continue;
+					else
+						setLedOn(col+colShift, row+rowShift, pattern.data[row][col]);
+				}
 			}
 		}
 	}
@@ -341,8 +343,17 @@ public class Launchpad implements Receiver{
 	/**
 	 * This function shows a String of text on the launchpad. It uses the default LaunchpadPatterns from the LaunchpadResources class.
 	 * @param text the text to show.
-	 * @param speed
-	 * @param colour
+	 * @param speed the time to show each letter in mili-seconds
+	 */
+	public void showText(String text, int speed){
+		showText(text, speed, -1);
+	}
+	
+	/**
+	 * This function shows a String of text on the launchpad. It uses the default LaunchpadPatterns from the LaunchpadResources class.
+	 * @param text the text to show.
+	 * @param speed the time to show each letter in mili-seconds
+	 * @param colour the color to show the text in. If colour is -1 than the original colour is used.
 	 */
 	public void showText(String text, int speed, int colour) {
 		LaunchpadPattern p;
@@ -352,7 +363,9 @@ public class Launchpad implements Receiver{
 			if (p == null) 
 				throw new RuntimeErrorException(null, "Could not find character " + c);
 			reset();
-			showPattern(p, colour);
+			if(colour != -1)
+				p = p.setColor(colour);
+			showPattern(p);
 			try {
 				Thread.sleep(speed);
 			} catch (InterruptedException e) {}

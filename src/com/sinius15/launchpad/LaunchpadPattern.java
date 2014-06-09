@@ -25,7 +25,7 @@ public class LaunchpadPattern implements Serializable {
 	 * 
 	 * @author Sinius15
 	 */
-	int[][] data = new int[9][9];
+	public int[][] data = new int[9][9];
 	
 	/**
 	 * Empty constructor
@@ -42,6 +42,28 @@ public class LaunchpadPattern implements Serializable {
 	 */
 	public LaunchpadPattern(int[][] data) {
 		this.data = data;
+	}
+	
+	/**
+	 * Creates a new launchpadPattern with the selected colour on all the places
+	 * where a light was on.
+	 * 
+	 * @param colour
+	 * @return a new LaunchpadPattern with the new color
+	 * @author Sinius15
+	 */
+	public LaunchpadPattern setColor(int color) {
+		int[][] out = new int[9][9];
+		for (int x = 0; x < data.length; x++) {
+			for (int y = 0; y < data[x].length; y++) {
+				if (data[x][y] == -1) {
+					out[x][y] = -1;
+				} else {
+					out[x][y] = color;
+				}
+			}
+		}
+		return new LaunchpadPattern(out);
 	}
 	
 	/**
