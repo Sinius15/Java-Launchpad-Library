@@ -16,7 +16,7 @@ public class LaunchTester implements LaunchListener{
 	public static final String name = "Launchpad S";
 	Launchpad s;
 	LaunchpadPattern patt;
-	int what = 4;
+	int what = 5;
 	
 	public LaunchTester(){
 		try {

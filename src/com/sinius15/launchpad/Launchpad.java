@@ -16,7 +16,7 @@ import javax.sound.midi.Transmitter;
 
 import org.jsresources.MidiCommon;
 
-public class Launchpad implements Receiver{
+public class Launchpad implements Receiver {
 	
 	private ArrayList<LaunchListener> listeners = new ArrayList<>();
 	private MidiDevice inputDevice = null, outputDevice = null;
@@ -104,7 +104,7 @@ public class Launchpad implements Receiver{
 	public void setLedOn(int colomn, int row, int colour) {
 		try {
 			ShortMessage m = new ShortMessage();
-			if(row == 0)
+			if (row == 0)
 				m.setMessage(ShortMessage.CONTROL_CHANGE, 0, coordToData(colomn, row), colour);
 			else
 				m.setMessage(ShortMessage.NOTE_ON, 0, coordToData(colomn, row), colour);
@@ -129,7 +129,7 @@ public class Launchpad implements Receiver{
 	public void setLedOff(int colomn, int row) {
 		try {
 			ShortMessage m = new ShortMessage();
-			if(row == 0)
+			if (row == 0)
 				m.setMessage(ShortMessage.CONTROL_CHANGE, 0, coordToData(colomn, row), COLOUR_OFF);
 			else
 				m.setMessage(ShortMessage.NOTE_OFF, 0, coordToData(colomn, row), COLOUR_OFF);
@@ -309,7 +309,8 @@ public class Launchpad implements Receiver{
 	/**
 	 * This funciton sets the lights on the launchpad to the selected pattern
 	 * 
-	 * @param pattern the pattern to show
+	 * @param pattern
+	 *            the pattern to show
 	 * @author Sinius15
 	 */
 	public void showPattern(LaunchpadPattern pattern) {
@@ -324,46 +325,58 @@ public class Launchpad implements Receiver{
 	/**
 	 * This funciton sets the lights on the launchpad to the selected pattern
 	 * 
-	 * @param pattern the pattern to show
+	 * @param pattern
+	 *            the pattern to show
 	 * @author Sinius15
 	 */
 	public void showPattern(LaunchpadPattern pattern, int rowShift, int colShift) {
 		for (int row = 0; row < 9; row++) {
 			for (int col = 0; col < 9; col++) {
-				if (pattern.data[row][col] != -1){
-					if(row+rowShift > 8 || col+colShift > 8 || col+colShift > 8 || col+colShift < 0)
+				if (pattern.data[row][col] != -1) {
+					if (row + rowShift > 8 || col + colShift > 8 || col + colShift > 8
+							|| col + colShift < 0)
 						continue;
 					else
-						setLedOn(col+colShift, row+rowShift, pattern.data[row][col]);
+						setLedOn(col + colShift, row + rowShift, pattern.data[row][col]);
 				}
 			}
 		}
 	}
 	
 	/**
-	 * This function shows a String of text on the launchpad. It uses the default LaunchpadPatterns from the LaunchpadResources class.
-	 * @param text the text to show.
-	 * @param speed the time to show each letter in mili-seconds
+	 * This function shows a String of text on the launchpad. It uses the
+	 * default LaunchpadPatterns from the LaunchpadResources class.
+	 * 
+	 * @param text
+	 *            the text to show.
+	 * @param speed
+	 *            the time to show each letter in mili-seconds
 	 */
-	public void showText(String text, int speed){
+	public void showText(String text, int speed) {
 		showText(text, speed, -1);
 	}
 	
 	/**
-	 * This function shows a String of text on the launchpad. It uses the default LaunchpadPatterns from the LaunchpadResources class.
-	 * @param text the text to show.
-	 * @param speed the time to show each letter in mili-seconds
-	 * @param color the color to show the text in. If colour is -1 than the original colour is used.
+	 * This function shows a String of text on the launchpad. It uses the
+	 * default LaunchpadPatterns from the LaunchpadResources class.
+	 * 
+	 * @param text
+	 *            the text to show.
+	 * @param speed
+	 *            the time to show each letter in mili-seconds
+	 * @param color
+	 *            the color to show the text in. If colour is -1 than the
+	 *            original colour is used.
 	 */
 	public void showText(String text, int speed, int color) {
 		LaunchpadPattern p;
 		for (int i = 0; i < text.length(); i++) {
 			char c = text.charAt(i);
 			p = LaunchpadResources.getLetterPattern(c);
-			if (p == null) 
+			if (p == null)
 				throw new RuntimeErrorException(null, "Could not find character " + c);
 			reset();
-			if(color != -1)
+			if (color != -1)
 				p = p.setColor(color);
 			showPattern(p);
 			try {
@@ -371,42 +384,47 @@ public class Launchpad implements Receiver{
 			} catch (InterruptedException e) {}
 		}
 	}
-
+	
 	/**
-	 * This funciton uses "Rapid Subsequent Updates" to turn on all the lights on the launchpad as fast as possible.
-	 * By using this rapid method, there 40 messages sent to the launchpad, instead of 80 (when you turn on all
-	 * the lights on one by one). If a midi-message is sent to the launchpad on channel 0 and this method is executing,
-	 * than this method will probably fail. So make sure this method is the only one sending messages oterwhise your are f***ed 
-	 * @param color The color to set the launchpad
+	 * This funciton uses "Rapid Subsequent Updates" to turn on all the lights
+	 * on the launchpad as fast as possible. By using this rapid method, there
+	 * 40 messages sent to the launchpad, instead of 80 (when you turn on all
+	 * the lights on one by one). If a midi-message is sent to the launchpad on
+	 * channel 0 and this method is executing, than this method will probably
+	 * fail. So make sure this method is the only one sending messages oterwhise
+	 * your are f***ed
+	 * 
+	 * @param color
+	 *            The color to set the launchpad
 	 */
-	public void setFullLaunchpadColor(int color){
+	public void setFullLaunchpadColor(int color) {
 		try {
+			setLedOn(0, 0, color);
 			ShortMessage m = new ShortMessage();
 			m.setMessage(ShortMessage.NOTE_ON, 2, color, color);
-			for(int i = 0; i<40; i++)
+			for (int i = 0; i < 40; i++)
 				sendMessage(m);
 		} catch (InvalidMidiDataException e) {
 			e.printStackTrace();
 		}
 		
-		
 	}
 	
 	/**
-	 * This method first resets the launchpad, after that it shows
-	 * all the colors avalable in the middle of the pad.
+	 * This method first resets the launchpad, after that it shows all the
+	 * colors avalable in the middle of the pad.
 	 */
-	public void showColorPallette(){
+	public void showColorPallette() {
 		reset();
-		for(int x = 0; x < 4; x++){
-			for(int y = 0; y < 4; y++){
-				setLedOn(x+2, y+3, Launchpad.calculateColour(x, y));
+		for (int x = 0; x < 4; x++) {
+			for (int y = 0; y < 4; y++) {
+				setLedOn(x + 2, y + 3, Launchpad.calculateColour(x, y));
 			}
 		}
 	}
 	
 	/**
-	 * DO NOT USE! THIS IS AN IMPLEMENTATION FOR THE LAUNCHPAD ITSSELF.
+	 * DO NOT CALL! THIS IS AN IMPLEMENTATION FOR THE LAUNCHPAD ITSSELF.
 	 * 
 	 * @author Sinius15
 	 */
@@ -414,13 +432,14 @@ public class Launchpad implements Receiver{
 	public void send(MidiMessage message, long timeStamp) {
 		if (message instanceof ShortMessage) {
 			ShortMessage m = (ShortMessage) message;
-			int row = dataToCoord(m.getData1(), m.getCommand()).y;
-			int colomn = dataToCoord(m.getData1(), m.getCommand()).x;
+			Point p = dataToCoord(m.getData1(), m.getCommand());
+			int row = p.y;
+			int colomn = p.x;
 			for (LaunchListener l : listeners) {
 				if (m.getData2() == 0)
-					l.onButtonUp(row, colomn);
+					l.onButtonUp(Math.abs(row), Math.abs(colomn));
 				else
-					l.onButtonDown(row, colomn);
+					l.onButtonDown(Math.abs(row), Math.abs(colomn));
 			}
 		}
 	}
