@@ -81,6 +81,13 @@ public class LightTest implements LaunchListener {
 				pad.reset();
 			}
 		});
+		rack.setOnButtonDown(0, 4, new Runnable() {
+			
+			@Override
+			public void run() {
+				pad.showColorPallette();
+			}
+		});
 		
 		pad.addListener(this);
 		try {
