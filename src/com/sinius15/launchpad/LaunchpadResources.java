@@ -148,59 +148,59 @@ public class LaunchpadResources {
 	public static LaunchpadPattern getLetterPattern(char letter) {
 		switch (letter) {
 			case 'A':
-				return new LaunchpadPattern(LETTER_CAPITAL_A);
+				return new LaunchpadPattern(LETTER_CAPITAL_A, "A");
 			case 'B':
-				return new LaunchpadPattern(LETTER_CAPITAL_B);
+				return new LaunchpadPattern(LETTER_CAPITAL_B, "B");
 			case 'C':
-				return new LaunchpadPattern(LETTER_CAPITAL_C);
+				return new LaunchpadPattern(LETTER_CAPITAL_C, "C");
 			case 'D':
-				return new LaunchpadPattern(LETTER_CAPITAL_D);
+				return new LaunchpadPattern(LETTER_CAPITAL_D, "D");
 			case 'E':
-				return new LaunchpadPattern(LETTER_CAPITAL_E);
+				return new LaunchpadPattern(LETTER_CAPITAL_E, "E");
 			case 'F':
-				return new LaunchpadPattern(LETTER_CAPITAL_F);
+				return new LaunchpadPattern(LETTER_CAPITAL_F, "F");
 			case 'G':
-				return new LaunchpadPattern(LETTER_CAPITAL_G);
+				return new LaunchpadPattern(LETTER_CAPITAL_G, "G");
 			case 'H':
-				return new LaunchpadPattern(LETTER_CAPITAL_H);
+				return new LaunchpadPattern(LETTER_CAPITAL_H, "H");
 			case 'I':
-				return new LaunchpadPattern(LETTER_CAPITAL_I);
+				return new LaunchpadPattern(LETTER_CAPITAL_I, "I");
 			case 'J':
-				return new LaunchpadPattern(LETTER_CAPITAL_J);
+				return new LaunchpadPattern(LETTER_CAPITAL_J, "J");
 			case 'K':
-				return new LaunchpadPattern(LETTER_CAPITAL_K);
+				return new LaunchpadPattern(LETTER_CAPITAL_K, "K");
 			case 'L':
-				return new LaunchpadPattern(LETTER_CAPITAL_L);
+				return new LaunchpadPattern(LETTER_CAPITAL_L, "L");
 			case 'M':
-				return new LaunchpadPattern(LETTER_CAPITAL_M);
+				return new LaunchpadPattern(LETTER_CAPITAL_M, "M");
 			case 'N':
-				return new LaunchpadPattern(LETTER_CAPITAL_N);
+				return new LaunchpadPattern(LETTER_CAPITAL_N, "N");
 			case 'O':
-				return new LaunchpadPattern(LETTER_CAPITAL_O);
+				return new LaunchpadPattern(LETTER_CAPITAL_O, "O");
 			case 'P':
-				return new LaunchpadPattern(LETTER_CAPITAL_P);
+				return new LaunchpadPattern(LETTER_CAPITAL_P, "P");
 			case 'Q':
-				return new LaunchpadPattern(LETTER_CAPITAL_Q);
+				return new LaunchpadPattern(LETTER_CAPITAL_Q, "Q");
 			case 'R':
-				return new LaunchpadPattern(LETTER_CAPITAL_R);
+				return new LaunchpadPattern(LETTER_CAPITAL_R, "R");
 			case 'S':
-				return new LaunchpadPattern(LETTER_CAPITAL_S);
+				return new LaunchpadPattern(LETTER_CAPITAL_S, "S");
 			case 'T':
-				return new LaunchpadPattern(LETTER_CAPITAL_T);
+				return new LaunchpadPattern(LETTER_CAPITAL_T, "T");
 			case 'U':
-				return new LaunchpadPattern(LETTER_CAPITAL_U);
+				return new LaunchpadPattern(LETTER_CAPITAL_U, "U");
 			case 'V':
-				return new LaunchpadPattern(LETTER_CAPITAL_V);
+				return new LaunchpadPattern(LETTER_CAPITAL_V, "V");
 			case 'W':
-				return new LaunchpadPattern(LETTER_CAPITAL_W);
+				return new LaunchpadPattern(LETTER_CAPITAL_W, "W");
 			case 'X':
-				return new LaunchpadPattern(LETTER_CAPITAL_X);
+				return new LaunchpadPattern(LETTER_CAPITAL_X, "X");
 			case 'Y':
-				return new LaunchpadPattern(LETTER_CAPITAL_Y);
+				return new LaunchpadPattern(LETTER_CAPITAL_Y, "Y");
 			case 'Z':
-				return new LaunchpadPattern(LETTER_CAPITAL_Z);
+				return new LaunchpadPattern(LETTER_CAPITAL_Z, "Z");
 			case ' ':
-				return new LaunchpadPattern(LETTER_SPACE);
+				return new LaunchpadPattern(LETTER_SPACE, " ");
 			default:
 				return null;
 		}

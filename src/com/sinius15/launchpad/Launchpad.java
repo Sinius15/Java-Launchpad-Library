@@ -1,5 +1,6 @@
 package com.sinius15.launchpad;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,7 +36,9 @@ public class Launchpad implements Receiver {
 	/**
 	 * @author Sinius15
 	 * @param midiDeviceName
-	 *            The name of the device. To see all the avalable devices, use
+	 *            The name of the device. If the name is NULL, than a epty Launchpad will be constructed:
+	 *            All variables are null.
+	 *         To see all the avalable devices, use
 	 *            <code>
 	 * MidiCommon.listDevices(true, true);
 	 * </code>
@@ -44,6 +47,8 @@ public class Launchpad implements Receiver {
 	 *             explinations.
 	 */
 	public Launchpad(String midiDeviceName) throws LaunchpadException {
+		if(midiDeviceName == null)
+			this.name = null;
 		this.name = midiDeviceName;
 		
 		MidiDevice.Info info = MidiCommon.getMidiDeviceInfo(this.name, false);
@@ -96,18 +101,18 @@ public class Launchpad implements Receiver {
 	 * @param row
 	 *            the row on the launchpad where the top rowh with the round
 	 *            buttons is 0 and the bottom row is 8
-	 * @param colour
+	 * @param color
 	 *            the colour of the led. Values are found in the static feelds
 	 *            in the Launchpad class
 	 * @author Sinius15
 	 */
-	public void setLedOn(int colomn, int row, int colour) {
+	public void setLedOn(int colomn, int row, int color) {
 		try {
 			ShortMessage m = new ShortMessage();
 			if (row == 0)
-				m.setMessage(ShortMessage.CONTROL_CHANGE, 0, coordToData(colomn, row), colour);
+				m.setMessage(ShortMessage.CONTROL_CHANGE, 0, coordToData(colomn, row), color);
 			else
-				m.setMessage(ShortMessage.NOTE_ON, 0, coordToData(colomn, row), colour);
+				m.setMessage(ShortMessage.NOTE_ON, 0, coordToData(colomn, row), color);
 			sendMessage(m);
 		} catch (InvalidMidiDataException e) {
 			e.printStackTrace();
@@ -116,7 +121,6 @@ public class Launchpad implements Receiver {
 	
 	/**
 	 * Turns off a led on the launchpad. <br>
-	 * Remember: It is not possible to turn on/off leds on the top row!
 	 * 
 	 * @param colomn
 	 *            the colomn on the launchpad where the left colomn is 0 and the
@@ -416,9 +420,9 @@ public class Launchpad implements Receiver {
 	 */
 	public void showColorPallette() {
 		reset();
-		for (int x = 0; x < 4; x++) {
+		for (int green = 0; green < 4; green++) {
 			for (int y = 0; y < 4; y++) {
-				setLedOn(x + 2, y + 3, Launchpad.calculateColour(x, y));
+				setLedOn(green + 2, y + 3, Launchpad.calculateColour(green, y));
 			}
 		}
 	}
@@ -442,6 +446,17 @@ public class Launchpad implements Receiver {
 					l.onButtonDown(Math.abs(row), Math.abs(colomn));
 			}
 		}
+	}
+
+	/**
+	 * Creates a rgb color from a launchpad color.
+	 * see {@link #calculateColour(int, int)} for the meaning of red and green
+	 * @param green the amount of green between 0 and 3
+	 * @param red the amount of red between 0 and 3
+	 * @return a Color object forom the launchpad-Color
+	 */
+	public static Color lpColorToRGB(int green, int red) {
+		return new Color(255/4*red, 255/4*green, 0); 
 	}
 	
 }

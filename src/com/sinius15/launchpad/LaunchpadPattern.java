@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class LaunchpadPattern implements Serializable {
 	
@@ -28,11 +29,22 @@ public class LaunchpadPattern implements Serializable {
 	public int[][] data = new int[9][9];
 	
 	/**
-	 * Empty constructor
+	 * Could be usefull to give the luanchpad-patterna a name.
 	 * 
 	 * @author Sinius15
 	 */
-	public LaunchpadPattern() {}
+	public String name;
+	
+	/**
+	 * Constructor. 
+	 * Initialize all the data values to -1.
+	 * 
+	 * @author Sinius15
+	 */
+	public LaunchpadPattern() {
+		for (int[] a : data) 
+			Arrays.fill(a, -1);
+	}
 	
 	/**
 	 * Constructor
@@ -42,6 +54,17 @@ public class LaunchpadPattern implements Serializable {
 	 */
 	public LaunchpadPattern(int[][] data) {
 		this.data = data;
+	}
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param data
+	 * @author Sinius15
+	 */
+	public LaunchpadPattern(int[][] data, String name) {
+		this.data = data;
+		this.name = name;
 	}
 	
 	/**
@@ -125,6 +148,21 @@ public class LaunchpadPattern implements Serializable {
 		out = out.substring(0, out.length() - 1);
 		out += "}";
 		return out;
+	}
+	
+	/**
+	 * @return a string with the name of the luanchpad. Default is NULL
+	 */
+	public String getName() {
+		return name;
+	}
+	
+	/**
+	 * Sets the name of the Launchpad-Pattern.
+	 * @param name
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 }

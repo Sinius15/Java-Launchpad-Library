@@ -11,11 +11,11 @@ import java.util.Arrays;
  */
 public class LaunchpadPatternFactory implements LaunchListener {
 	
-	Launchpad l;
+	private Launchpad l;
 	// this is the actual number stored in the data array. -1=off,
 	// velocity=colour codes
-	int selectedColour = -1;
-	int[][] data = new int[9][9];
+	private int selectedColour = -1;
+	private int[][] data = new int[9][9];
 	
 	/**
 	 * Creates a new launchpadPatternFactory.
@@ -30,7 +30,8 @@ public class LaunchpadPatternFactory implements LaunchListener {
 			Arrays.fill(a, -1);
 		}
 		// Arrays.fill(data, new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1 });
-		// /\ This does not work!~!!! (i do not know why it does not work)
+		// /\ This does not work!~!!! (i do not know why it does not work)  
+		// /\   <now i do! it is because it references to the same array all the time>
 	}
 	
 	/**
@@ -79,7 +80,6 @@ public class LaunchpadPatternFactory implements LaunchListener {
 			l.setLedOff(colomn, row);
 			data[colomn][row] = -1;
 		} else {
-			System.out.println(colomn);
 			l.setLedOn(colomn, row, selectedColour);
 			data[colomn][row] = selectedColour;
 		}

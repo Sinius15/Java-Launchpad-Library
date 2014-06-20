@@ -5,7 +5,6 @@ import java.io.IOException;
 import javax.sound.midi.MidiUnavailableException;
 
 import com.sinius15.launchpad.LPRack;
-import com.sinius15.launchpad.LaunchListener;
 import com.sinius15.launchpad.Launchpad;
 import com.sinius15.launchpad.LaunchpadException;
 import com.sinius15.launchpad.LaunchpadPattern;
