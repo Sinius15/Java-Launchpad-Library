@@ -7,7 +7,7 @@ import javax.sound.midi.MidiUnavailableException;
 import com.sinius15.launchpad.LPRack;
 import com.sinius15.launchpad.Launchpad;
 import com.sinius15.launchpad.LaunchpadException;
-import com.sinius15.launchpad.LaunchpadPattern;
+import com.sinius15.launchpad.pattern.LaunchpadPattern;
 
 public class LightTest {
 	
@@ -65,13 +65,13 @@ public class LightTest {
 	public void setGridA() {
 		curRack = new LPRack(pad);
 		curRack.setLaunchpadPattern(4, 3,
-				new LaunchpadPattern(CUBE1).setColor(Launchpad.COLOUR_AMBER_FULL));
+				new LaunchpadPattern(CUBE1).setColor(-99, Launchpad.COLOR_AMBER_FULL));
 		curRack.setLaunchpadPattern(3, 2,
-				new LaunchpadPattern(CUBE2).setColor(Launchpad.COLOUR_AMBER_FULL));
+				new LaunchpadPattern(CUBE2).setColor(-99, Launchpad.COLOR_AMBER_FULL));
 		curRack.setLaunchpadPattern(2, 1,
-				new LaunchpadPattern(CUBE3).setColor(Launchpad.COLOUR_AMBER_FULL));
+				new LaunchpadPattern(CUBE3).setColor(-99, Launchpad.COLOR_AMBER_FULL));
 		curRack.setLaunchpadPattern(1, 0,
-				new LaunchpadPattern(CUBE4).setColor(Launchpad.COLOUR_AMBER_FULL));
+				new LaunchpadPattern(CUBE4).setColor(-99, Launchpad.COLOR_AMBER_FULL));
 		
 		for (int col = 0; col <= 8; col++) {
 			curRack.setOnButtonDown(8, col, new ShotEffect(8, col));
@@ -80,19 +80,19 @@ public class LightTest {
 		curRack.setOnButtonDown(0, 0, new Runnable() {
 			@Override
 			public void run() {
-				pad.setFullLaunchpadColor(Launchpad.COLOUR_GREEN_FULL);
+				pad.setFullLaunchpadColor(Launchpad.COLOR_GREEN_FULL);
 			}
 		});
 		curRack.setOnButtonDown(0, 1, new Runnable() {
 			@Override
 			public void run() {
-				pad.setFullLaunchpadColor(Launchpad.COLOUR_RED_FULL);
+				pad.setFullLaunchpadColor(Launchpad.COLOR_RED_FULL);
 			}
 		});
 		curRack.setOnButtonDown(0, 2, new Runnable() {
 			@Override
 			public void run() {
-				pad.setFullLaunchpadColor(Launchpad.COLOUR_AMBER_FULL);
+				pad.setFullLaunchpadColor(Launchpad.COLOR_AMBER_FULL);
 			}
 		});
 		curRack.setOnButtonDown(0, 3, new Runnable() {
@@ -182,7 +182,7 @@ public class LightTest {
 		public void run() {
 			int curRow = row;
 			do {
-				pad.setLedOn(col, curRow, Launchpad.COLOUR_GREEN_FULL);
+				pad.setLedOn(col, curRow, Launchpad.COLOR_GREEN_FULL);
 				try {
 					Thread.sleep(50);
 				} catch (InterruptedException e) {

@@ -1,4 +1,4 @@
-package com.sinius15.launchpad;
+package com.sinius15.launchpad.pattern;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,6 +8,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Arrays;
+
+import com.sinius15.launchpad.Launchpad;
 
 public class LaunchpadPattern implements Serializable {
 	
@@ -20,9 +22,8 @@ public class LaunchpadPattern implements Serializable {
 	
 	/**
 	 * the data-array that stores all the colour codes.<br>
-	 * -1=off<br>
-	 * The other nubers are the acctual valocity numbers ready to be send to the
-	 * launchpad.
+	 * {@see Launchpad} for the color values; The other nubers are the acctual
+	 * valocity numbers ready to be send to the launchpad.
 	 * 
 	 * @author Sinius15
 	 */
@@ -36,13 +37,12 @@ public class LaunchpadPattern implements Serializable {
 	public String name;
 	
 	/**
-	 * Constructor. 
-	 * Initialize all the data values to -1.
+	 * Constructor. Initialize all the data values to -1.
 	 * 
 	 * @author Sinius15
 	 */
 	public LaunchpadPattern() {
-		for (int[] a : data) 
+		for (int[] a : data)
 			Arrays.fill(a, -1);
 	}
 	
@@ -69,21 +69,23 @@ public class LaunchpadPattern implements Serializable {
 	
 	/**
 	 * Creates a new launchpadPattern with the selected colour on all the places
-	 * where a light was on.
+	 * where the oldColor is selected.
 	 * 
-	 * @param colour
+	 * @param oldColor is the old color to replace. If this argument is -99
+	 * than all the colors that are not transparent will be set to the new color.
+	 * @param newColor is the new color to replace the old color with
 	 * @return a new LaunchpadPattern with the new color
 	 * @author Sinius15
 	 */
-	public LaunchpadPattern setColor(int color) {
+	public LaunchpadPattern setColor(int oldColor, int newColor) {
 		int[][] out = new int[9][9];
 		for (int x = 0; x < data.length; x++) {
 			for (int y = 0; y < data[x].length; y++) {
-				if (data[x][y] == -1) {
-					out[x][y] = -1;
-				} else {
-					out[x][y] = color;
-				}
+				if (data[x][y] == oldColor)
+					out[x][y] = newColor;
+				if (oldColor == -99 && data[x][y] != Launchpad.COLOR_TRANSPARANT)
+					out[x][y] = newColor;
+				
 			}
 		}
 		return new LaunchpadPattern(out);
@@ -159,6 +161,7 @@ public class LaunchpadPattern implements Serializable {
 	
 	/**
 	 * Sets the name of the Launchpad-Pattern.
+	 * 
 	 * @param name
 	 */
 	public void setName(String name) {

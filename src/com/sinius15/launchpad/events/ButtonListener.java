@@ -1,6 +1,11 @@
-package com.sinius15.launchpad;
+package com.sinius15.launchpad.events;
 
-public interface LaunchListener {
+/**
+ * 
+ * @author Sinius15
+ * @see www.sinius15.com
+ */
+public interface ButtonListener {
 
 	/**
 	 * Triggered when a button on the launchpad is pushed in. 

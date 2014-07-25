@@ -6,17 +6,18 @@ import java.util.Scanner;
 
 import org.jsresources.MidiCommon;
 
-import com.sinius15.launchpad.LaunchListener;
 import com.sinius15.launchpad.Launchpad;
-import com.sinius15.launchpad.LaunchpadPattern;
-import com.sinius15.launchpad.LaunchpadPatternFactory;
+import com.sinius15.launchpad.events.ButtonListener;
+import com.sinius15.launchpad.pattern.LaunchpadPattern;
+import com.sinius15.launchpad.pattern.LaunchpadPatternFactory;
 
-public class LaunchTester implements LaunchListener{
+@SuppressWarnings("deprecation")
+public class LaunchTester implements ButtonListener{
 
 	public static final String name = "Launchpad S";
 	Launchpad s;
 	LaunchpadPattern patt;
-	int what = 5;
+	int what = 8;
 	
 	public LaunchTester(){
 		try {
@@ -24,7 +25,7 @@ public class LaunchTester implements LaunchListener{
 				System.out.println(s);
 			}
 			s = new Launchpad(name);
-			s.addListener(this);
+			s.addButtonListener(this);
 			s.open();
 			if(what == 0){
 				LaunchpadPatternFactory fac = new LaunchpadPatternFactory(s);
@@ -65,7 +66,7 @@ public class LaunchTester implements LaunchListener{
 				}
 			}
 			if(what == 4){
-				s.showText("Hello world".toUpperCase(), 500, Launchpad.COLOUR_GREEN_FULL);
+				s.showText("Hello world".toUpperCase(), 500, Launchpad.COLOR_GREEN_FULL, false);
 			}
 			if(what == 5){
 				Scanner scanner = new Scanner(System.in);
@@ -101,6 +102,11 @@ public class LaunchTester implements LaunchListener{
 				s.showPattern(pat);
 				Thread.sleep(1000);
 			}
+			if(what == 8){
+				while(s.isConnected()){
+					Thread.sleep(3);
+				}
+			}
 			s.close();
 			
 		} catch (Exception e) {
@@ -111,7 +117,7 @@ public class LaunchTester implements LaunchListener{
 	@Override
 	public void onButtonDown(int row, int colomn) {
 		if(what == 6)
-			s.setLedOn(colomn, row, Launchpad.COLOUR_RED_FULL);
+			s.setLedOn(colomn, row, Launchpad.COLOR_RED_FULL);
 		if(what == 1)
 			s.showPattern(patt);
 	}

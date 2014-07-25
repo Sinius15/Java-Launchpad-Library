@@ -1,5 +1,7 @@
 package com.sinius15.launchpad;
 
+import com.sinius15.launchpad.pattern.LaunchpadPattern;
+
 public class LaunchpadResources {
 	
 	public static final int[][] LETTER_CAPITAL_A = { { -1, -1, -1, -1, -1, -1, -1, -1, -1 },

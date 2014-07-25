@@ -1,4 +1,4 @@
-package com.sinius15.launchpad;
+package com.sinius15.launchpad.pattern;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -10,7 +10,10 @@ import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
-public class VisualLaunchpadPatternFactory extends JPanel implements LaunchListener{
+import com.sinius15.launchpad.Launchpad;
+import com.sinius15.launchpad.events.ButtonListener;
+
+public class VisualLaunchpadPatternFactory extends JPanel implements ButtonListener{
 
 	//we need this because we extend JPanel
 	private static final long serialVersionUID = -6516730926896670057L;
@@ -19,7 +22,7 @@ public class VisualLaunchpadPatternFactory extends JPanel implements LaunchListe
 	private Launchpad l;
 	// this is the actual number stored in the data array. -1=off,
 	// velocity=colour codes
-	private int selectedColour = -1;
+	private int selectedColour = Launchpad.COLOR_OFF;
 	private LaunchpadPattern pattern;
 	
 	/**
@@ -65,19 +68,23 @@ public class VisualLaunchpadPatternFactory extends JPanel implements LaunchListe
 	public void startRecording() {
 		//set lanchpad stuff
 		l.reset();
-		l.addListener(this);
+		l.addButtonListener(this);
 		
 		//set layout and size
 		setLayout(null);
-		setBounds(0, 0, 220, 220);
-		setSize(220, 200);
-		setPreferredSize(new Dimension(220, 220));
+		setBounds(0, 0, 200, 250);
+		setSize(200, 250);
+		setPreferredSize(new Dimension(200, 250));
+		
+		JToggleButton b = addButton(Launchpad.COLOR_TRANSPARANT, Color.gray);
+		b.setBounds(0, 200, 200, 50);
+		b.setText("Transparent");
 		
 		//add buttons
 		for (int green = 0; green < 4; green++) {
 			for (int red = 0; red < 4; red++) {
 				int lpColor = Launchpad.calculateColour(green, red);
-				addButton(lpColor, Launchpad.lpColorToRGB(green, red)).setBounds(green*50+2, red*50+2, 50, 50);
+				addButton(lpColor, Launchpad.lpColorToRGB(green, red)).setBounds(green*50, red*50, 50, 50);
 			}
 		}
 		
@@ -98,7 +105,7 @@ public class VisualLaunchpadPatternFactory extends JPanel implements LaunchListe
 		b.setBorder(BorderFactory.createEmptyBorder());
 		
 		b.setBackground(rgbColor);
-		b.setForeground(rgbColor);
+		b.setForeground(Color.black);
 		
 		b.setContentAreaFilled(false);
 		b.setOpaque(true);
@@ -125,7 +132,7 @@ public class VisualLaunchpadPatternFactory extends JPanel implements LaunchListe
 	 * @author Sinius15
 	 */
 	public LaunchpadPattern stopRecording() {
-		l.removeListener(this);
+		l.removeButtonListener(this);
 		return pattern;
 	}
 	

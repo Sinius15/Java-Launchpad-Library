@@ -2,18 +2,18 @@ package com.sinius15.test;
 
 import javax.sound.midi.MidiUnavailableException;
 
-import com.sinius15.launchpad.LaunchListener;
 import com.sinius15.launchpad.Launchpad;
 import com.sinius15.launchpad.LaunchpadException;
+import com.sinius15.launchpad.events.ButtonListener;
 
-public class DontTouchTheWhite implements Runnable, LaunchListener{
+public class DontTouchTheWhite implements Runnable, ButtonListener{
 	
 	Launchpad pad;
 	boolean isRunning;
 	
 	//9 rows, 8 cols
 	boolean[][] grid = new boolean[9][8];
-	int speed = 500;
+	int speed = 700;
 	int score = 0;
 	
 	public DontTouchTheWhite(String launchpadName){
@@ -25,7 +25,7 @@ public class DontTouchTheWhite implements Runnable, LaunchListener{
 			e.printStackTrace();
 			return;
 		}
-		pad.addListener(this);
+		pad.addButtonListener(this);
 		
 		Thread game = new Thread(this, "gameThread");
 		isRunning = true;
@@ -38,7 +38,7 @@ public class DontTouchTheWhite implements Runnable, LaunchListener{
 		for(int row = 0; row<9; row++){
 			for(int col = 0; col<8; col++){
 				if(grid[row][col])
-					pad.setLedOn(col, row, Launchpad.COLOUR_RED_FULL);
+					pad.setLedOn(col, row, Launchpad.COLOR_RED_FULL);
 			}
 		}
 	}
@@ -63,7 +63,7 @@ public class DontTouchTheWhite implements Runnable, LaunchListener{
 			score++;
 		}else{
 			isRunning = false;
-			pad.setLedOn(colomn, row, Launchpad.COLOUR_AMBER_FULL);
+			pad.setLedOn(colomn, row, Launchpad.COLOR_AMBER_FULL);
 		}
 	}
 
@@ -92,7 +92,7 @@ public class DontTouchTheWhite implements Runnable, LaunchListener{
 			}
 		}
 		System.out.println(score);
-		pad.showText("YOU LOST", 300, Launchpad.COLOUR_RED_FULL);
+		pad.showText("YOU LOST", 300, Launchpad.COLOR_RED_FULL, false);
 		pad.reset();
 		pad.close();
 	}

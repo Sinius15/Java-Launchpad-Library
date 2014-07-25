@@ -36,7 +36,7 @@ public class BufferedLaunchpad extends Launchpad {
 	public BufferedLaunchpad(String midiDeviceName) throws LaunchpadException {
 		super(midiDeviceName);
 		for (int[] a : ledState) 
-			Arrays.fill(a, COLOUR_OFF);
+			Arrays.fill(a, COLOR_OFF);
 	}
 	
 	/**
@@ -78,17 +78,17 @@ public class BufferedLaunchpad extends Launchpad {
 	 */
 	@Override
 	public void setLedOff(int colomn, int row) {
-		if(ledState[row][colomn] == COLOUR_OFF)
+		if(ledState[row][colomn] == COLOR_OFF)
 			return;
 		super.setLedOff(colomn, row);
-		ledState[row][colomn] = COLOUR_OFF;
+		ledState[row][colomn] = COLOR_OFF;
 	}
 	
 	@Override
 	public void reset() {
 		super.reset();
 		for (int[] a : ledState) 
-			Arrays.fill(a, COLOUR_OFF);
+			Arrays.fill(a, COLOR_OFF);
 	}
 	
 	/**

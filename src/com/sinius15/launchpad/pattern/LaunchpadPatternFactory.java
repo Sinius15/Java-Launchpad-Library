@@ -1,15 +1,19 @@
-package com.sinius15.launchpad;
+package com.sinius15.launchpad.pattern;
 
 import java.util.Arrays;
 
+import com.sinius15.launchpad.Launchpad;
+import com.sinius15.launchpad.events.ButtonListener;
+
 /**
  * This class is used to create or load a (new) LaunchpadPattern. See the
- * github-documentation for fearther explination and examples.
+ * github-documentation for further explination and examples.
  * 
  * @author Sinius15
  * @see www.sinius15.com
  */
-public class LaunchpadPatternFactory implements LaunchListener {
+@Deprecated
+public class LaunchpadPatternFactory implements ButtonListener {
 	
 	private Launchpad l;
 	// this is the actual number stored in the data array. -1=off,
@@ -49,7 +53,7 @@ public class LaunchpadPatternFactory implements LaunchListener {
 	 */
 	public void startRecording() {
 		l.reset();
-		l.addListener(this);
+		l.addButtonListener(this);
 		for (int i = 1; i < 8; i++)
 			l.setLedOn(8, i + 1, rowToColour(i));
 	}
@@ -61,7 +65,7 @@ public class LaunchpadPatternFactory implements LaunchListener {
 	 * @author Sinius15
 	 */
 	public LaunchpadPattern stopRecording() {
-		l.removeListener(this);
+		l.removeButtonListener(this);
 		return new LaunchpadPattern(data);
 	}
 	
@@ -104,19 +108,19 @@ public class LaunchpadPatternFactory implements LaunchListener {
 			case 0:
 				return -1;
 			case 1:
-				return Launchpad.COLOUR_RED_LOW;
+				return Launchpad.COLOR_RED_LOW;
 			case 2:
-				return Launchpad.COLOUR_RED_FULL;
+				return Launchpad.COLOR_RED_FULL;
 			case 3:
-				return Launchpad.COLOUR_AMBER_LOW;
+				return Launchpad.COLOR_AMBER_LOW;
 			case 4:
-				return Launchpad.COLOUR_AMBER_FULL;
+				return Launchpad.COLOR_AMBER_FULL;
 			case 5:
-				return Launchpad.COLOUR_YELLOW_FULL;
+				return Launchpad.COLOR_YELLOW_FULL;
 			case 6:
-				return Launchpad.COLOUR_GREEN_LOW;
+				return Launchpad.COLOR_GREEN_LOW;
 			case 7:
-				return Launchpad.COLOUR_GREEN_FULL;
+				return Launchpad.COLOR_GREEN_FULL;
 			default:
 				return 0;
 		}

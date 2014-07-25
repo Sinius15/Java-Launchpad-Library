@@ -1,8 +1,10 @@
 package com.sinius15.launchpad;
 
-public class LPRack implements LaunchListener{
+import com.sinius15.launchpad.events.ButtonListener;
+import com.sinius15.launchpad.pattern.LaunchpadPattern;
 
-	
+public class LPRack implements ButtonListener{
+
 	//[row][colomn]
 	private Runnable[][] runnersUp = new Runnable[9][9];
 	private Runnable[][] runnersDown = new Runnable[9][9];
@@ -22,14 +24,14 @@ public class LPRack implements LaunchListener{
 	public LPRack(Launchpad pad){
 		this.pad = pad;
 		if(pad != null)
-			pad.addListener(this);
+			pad.addButtonListener(this);
 	}
 	
 	/**
 	 * This method stops this class from receiving any events from the launchpad.
 	 */
 	public void stop(){
-		pad.removeListener(this);
+		pad.removeButtonListener(this);
 	}
 	
 	/**
@@ -121,7 +123,7 @@ public class LPRack implements LaunchListener{
 		if(runnersUp[row][colomn] != null)
 			new Thread(runnersUp[row][colomn], "Created_By_LPRack.class_onButtonUp"+row+","+colomn).start();
 		if(patterns[row][colomn] != null)
-			pad.showPattern(patterns[row][colomn].setColor(Launchpad.COLOUR_OFF));
+			pad.showPattern(patterns[row][colomn].setColor(-99, Launchpad.COLOR_OFF));
 	}
 	
 	

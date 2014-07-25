@@ -3,7 +3,9 @@ package com.sinius15.launchpad;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import javax.management.RuntimeErrorException;
 import javax.sound.midi.InvalidMidiDataException;
@@ -17,29 +19,37 @@ import javax.sound.midi.Transmitter;
 
 import org.jsresources.MidiCommon;
 
+import com.sinius15.launchpad.events.ButtonListener;
+import com.sinius15.launchpad.events.PadListener;
+import com.sinius15.launchpad.pattern.LaunchpadPattern;
+
 public class Launchpad implements Receiver {
 	
-	private ArrayList<LaunchListener> listeners = new ArrayList<>();
+	private List<ButtonListener> buttonListeners = new ArrayList<>();
+	private List<PadListener> padListeners = new ArrayList<>();
+	
 	private MidiDevice inputDevice = null, outputDevice = null;
 	private Receiver transmitter = null;
 	private String name;
+	private Thread monitor;
+	private boolean isOpen = false;
 	
-	public static final int COLOUR_OFF = 12;
-	public static final int COLOUR_RED_LOW = 13;
-	public static final int COLOUR_RED_FULL = 15;
-	public static final int COLOUR_AMBER_LOW = 29;
-	public static final int COLOUR_AMBER_FULL = 63;
-	public static final int COLOUR_YELLOW_FULL = 62;
-	public static final int COLOUR_GREEN_LOW = 28;
-	public static final int COLOUR_GREEN_FULL = 60;
+	public static final int COLOR_TRANSPARANT = -1;
+	public static final int COLOR_OFF = 12;
+	public static final int COLOR_RED_LOW = 13;
+	public static final int COLOR_RED_FULL = 15;
+	public static final int COLOR_AMBER_LOW = 29;
+	public static final int COLOR_AMBER_FULL = 63;
+	public static final int COLOR_YELLOW_FULL = 62;
+	public static final int COLOR_GREEN_LOW = 28;
+	public static final int COLOR_GREEN_FULL = 60;
 	
 	/**
 	 * @author Sinius15
 	 * @param midiDeviceName
-	 *            The name of the device. If the name is NULL, than a epty Launchpad will be constructed:
-	 *            All variables are null.
-	 *         To see all the avalable devices, use
-	 *            <code>
+	 *            The name of the device. If the name is NULL, than a epty
+	 *            Launchpad will be constructed: All variables are null. To see
+	 *            all the avalable devices, use <code>
 	 * MidiCommon.listDevices(true, true);
 	 * </code>
 	 * @throws LaunchpadException
@@ -47,7 +57,7 @@ public class Launchpad implements Receiver {
 	 *             explinations.
 	 */
 	public Launchpad(String midiDeviceName) throws LaunchpadException {
-		if(midiDeviceName == null)
+		if (midiDeviceName == null)
 			this.name = null;
 		this.name = midiDeviceName;
 		
@@ -77,6 +87,16 @@ public class Launchpad implements Receiver {
 	}
 	
 	/**
+	 * Check if the launchpad is still connected to the computer.
+	 * 
+	 * @return true if the launchpad is still connected to the computer, else it
+	 *         returns false.
+	 */
+	public boolean isConnected() {
+		return Arrays.asList(MidiCommon.listDevices(true, true)).contains(name);
+	}
+	
+	/**
 	 * Resets the launchpad. All LEDs are turned off, and the mapping mode,
 	 * buffer settings, and duty cycle are reset to their default values.
 	 * 
@@ -93,7 +113,8 @@ public class Launchpad implements Receiver {
 	}
 	
 	/**
-	 * Turns on a led on the launchpad.<br>
+	 * Turns on a led on the launchpad. When {@link #COLOR_TRANSPARANT} is
+	 * selected, nothing is set!
 	 * 
 	 * @param colomn
 	 *            the colomn on the launchpad where the left colomn is 0 and the
@@ -107,6 +128,8 @@ public class Launchpad implements Receiver {
 	 * @author Sinius15
 	 */
 	public void setLedOn(int colomn, int row, int color) {
+		if (color == COLOR_TRANSPARANT)
+			return;
 		try {
 			ShortMessage m = new ShortMessage();
 			if (row == 0)
@@ -134,9 +157,9 @@ public class Launchpad implements Receiver {
 		try {
 			ShortMessage m = new ShortMessage();
 			if (row == 0)
-				m.setMessage(ShortMessage.CONTROL_CHANGE, 0, coordToData(colomn, row), COLOUR_OFF);
+				m.setMessage(ShortMessage.CONTROL_CHANGE, 0, coordToData(colomn, row), COLOR_OFF);
 			else
-				m.setMessage(ShortMessage.NOTE_OFF, 0, coordToData(colomn, row), COLOUR_OFF);
+				m.setMessage(ShortMessage.NOTE_OFF, 0, coordToData(colomn, row), COLOR_OFF);
 			sendMessage(m);
 		} catch (InvalidMidiDataException e) {
 			e.printStackTrace();
@@ -145,7 +168,8 @@ public class Launchpad implements Receiver {
 	
 	/**
 	 * Turns on all leds in 3 different colours: orange-low, green-low, yellow
-	 * with a pause of 500 miliseconds. This occupies the thread for 1,5 second.
+	 * with a pause of 500 miliseconds. This occupies the thread for 1500
+	 * mili-seconds.
 	 * 
 	 * @author Sinius15
 	 */
@@ -188,6 +212,32 @@ public class Launchpad implements Receiver {
 		t.setReceiver(this);
 		outputDevice.open();
 		transmitter = outputDevice.getReceiver();
+		isOpen = true;
+		monitor = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (isOpen && isConnected()) {
+					try {
+						Thread.sleep(3);
+					} catch (InterruptedException e) {}
+				}
+				if (!isConnected()) {
+					isOpen = false;
+					inputDevice.close();
+					transmitter.close();
+					outputDevice.close();
+					for (PadListener lstnr : padListeners) {
+						lstnr.padDisconnected();
+					}
+				}
+				
+			}
+		}, "Launchpad_Monitor_for_pad_" + name);
+		monitor.start();
+		
+		for (PadListener lstnr : this.padListeners) {
+			lstnr.padOpen();
+		}
 	}
 	
 	/**
@@ -256,43 +306,69 @@ public class Launchpad implements Receiver {
 	 * @param red
 	 *            the amount of red between 0 and 3
 	 * @return the colour velocity
-	 * @author Sinius15
 	 */
 	public static int calculateColour(int green, int red) {
 		return (16 * green) + red + 12;
 	}
 	
 	/**
-	 * Adds a listener for the launchpad.
+	 * Adds a listener for button presses on the launchpad.
 	 * 
 	 * @param listener
 	 *            the listener to add
 	 * @return <tt>true</tt> (as specified by {@link Collection#add})
-	 * @author Sinius15
 	 */
-	public boolean addListener(LaunchListener listener) {
-		return this.listeners.add(listener);
+	public boolean addButtonListener(ButtonListener listener) {
+		return this.buttonListeners.add(listener);
 	}
 	
 	/**
-	 * Removes a listener from the launchpad.
+	 * Removes a listener from button presses on the launchpad.
 	 * 
 	 * @param listener
 	 *            the listener to remove
-	 * @return <tt>true</tt> if this list contained the specified element
-	 * @author Sinius15
+	 * @return <tt>true</tt> as specified by {@link Collection#remove}
 	 */
-	public boolean removeListener(LaunchListener listener) {
-		return this.listeners.remove(listener);
+	public boolean removeButtonListener(ButtonListener listener) {
+		return this.buttonListeners.remove(listener);
 	}
 	
 	/**
-	 * Removes all the listeners.
+	 * Removes all the button-listeners.
 	 * 
-	 * @author Sinius15
 	 */
-	public void clearListeners() {
-		this.listeners.clear();
+	public void clearButtonListeners() {
+		this.buttonListeners.clear();
+	}
+	
+	/**
+	 * Adds a pad-listener to the launchpad.
+	 * 
+	 * @param listener
+	 *            the listener to add
+	 * @return <tt>true</tt> as specified by {@link Collection#add}
+	 */
+	public boolean addPadListener(PadListener listener) {
+		return this.padListeners.add(listener);
+	}
+	
+	/**
+	 * Removes a pad-listener from the launchpad.
+	 * 
+	 * @param listener
+	 *            the listener to remove
+	 * @return <tt>true</tt> as specified by {@link Collection#remove}
+	 */
+	public boolean removePadListener(PadListener listener) {
+		return this.padListeners.remove(listener);
+	}
+	
+	/**
+	 * Removes all the pad-listeners.
+	 * 
+	 */
+	public void clearPadListeners() {
+		this.padListeners.clear();
 	}
 	
 	/**
@@ -300,18 +376,26 @@ public class Launchpad implements Receiver {
 	 * receiving any events. This function calls Launchpad.reset() before
 	 * closing the connections.
 	 * 
-	 * @author Sinius15
+	 * @throws IllegalStateException
+	 *             when the launchpad was already closed or disconnected.
 	 */
 	@Override
 	public void close() {
+		if (isOpen = false)
+			throw new IllegalStateException("Launchpad was already closed or disconnected.");
 		reset();
+		isOpen = false;
 		inputDevice.close();
 		transmitter.close();
 		outputDevice.close();
+		for (PadListener lstnr : this.padListeners) {
+			lstnr.padClose();
+		}
 	}
 	
 	/**
-	 * This funciton sets the lights on the launchpad to the selected pattern
+	 * This funciton sets the lights on the launchpad to the selected pattern.
+	 * Every button where color_transparent is selected nothing will be done.
 	 * 
 	 * @param pattern
 	 *            the pattern to show
@@ -320,14 +404,16 @@ public class Launchpad implements Receiver {
 	public void showPattern(LaunchpadPattern pattern) {
 		for (int row = 0; row < 9; row++) {
 			for (int col = 0; col < 9; col++) {
-				if (pattern.data[row][col] != -1)
-					setLedOn(row, col, pattern.data[row][col]);
+				if (pattern.data[row][col] == COLOR_TRANSPARANT)
+					continue;
+				setLedOn(row, col, pattern.data[row][col]);
 			}
 		}
 	}
 	
 	/**
-	 * This funciton sets the lights on the launchpad to the selected pattern
+	 * This funciton sets the lights on the launchpad to the selected pattern.
+	 * Everywhere color_transparent is set, will nothing be done.
 	 * 
 	 * @param pattern
 	 *            the pattern to show
@@ -340,8 +426,11 @@ public class Launchpad implements Receiver {
 					if (row + rowShift > 8 || col + colShift > 8 || col + colShift > 8
 							|| col + colShift < 0)
 						continue;
-					else
+					else {
+						if (pattern.data[row][col] == COLOR_TRANSPARANT)
+							continue;
 						setLedOn(col + colShift, row + rowShift, pattern.data[row][col]);
+					}
 				}
 			}
 		}
@@ -354,25 +443,15 @@ public class Launchpad implements Receiver {
 	 * @param text
 	 *            the text to show.
 	 * @param speed
-	 *            the time to show each letter in mili-seconds
-	 */
-	public void showText(String text, int speed) {
-		showText(text, speed, -1);
-	}
-	
-	/**
-	 * This function shows a String of text on the launchpad. It uses the
-	 * default LaunchpadPatterns from the LaunchpadResources class.
-	 * 
-	 * @param text
-	 *            the text to show.
-	 * @param speed
-	 *            the time to show each letter in mili-seconds
+	 *            the time to show each letter in mili-seconds.
 	 * @param color
-	 *            the color to show the text in. If colour is -1 than the
-	 *            original colour is used.
+	 *            the color to show the text in.
+	 * @param transparent
+	 *            If transparent is true, than the background-color will be
+	 *            transparent. If transparent is false, than teh
+	 *            background-color will be off.
 	 */
-	public void showText(String text, int speed, int color) {
+	public void showText(String text, int speed, int color, boolean transparent) {
 		LaunchpadPattern p;
 		for (int i = 0; i < text.length(); i++) {
 			char c = text.charAt(i);
@@ -380,8 +459,10 @@ public class Launchpad implements Receiver {
 			if (p == null)
 				throw new RuntimeErrorException(null, "Could not find character " + c);
 			reset();
-			if (color != -1)
-				p = p.setColor(color);
+			p = p.setColor(15, color);
+			if (!transparent)
+				p.setColor(COLOR_TRANSPARANT, COLOR_OFF);
+			
 			showPattern(p);
 			try {
 				Thread.sleep(speed);
@@ -402,6 +483,8 @@ public class Launchpad implements Receiver {
 	 *            The color to set the launchpad
 	 */
 	public void setFullLaunchpadColor(int color) {
+		if (color == COLOR_TRANSPARANT)
+			return;
 		try {
 			setLedOn(0, 0, color);
 			ShortMessage m = new ShortMessage();
@@ -439,7 +522,7 @@ public class Launchpad implements Receiver {
 			Point p = dataToCoord(m.getData1(), m.getCommand());
 			int row = p.y;
 			int colomn = p.x;
-			for (LaunchListener l : listeners) {
+			for (ButtonListener l : buttonListeners) {
 				if (m.getData2() == 0)
 					l.onButtonUp(Math.abs(row), Math.abs(colomn));
 				else
@@ -447,16 +530,28 @@ public class Launchpad implements Receiver {
 			}
 		}
 	}
-
+	
 	/**
-	 * Creates a rgb color from a launchpad color.
-	 * see {@link #calculateColour(int, int)} for the meaning of red and green
-	 * @param green the amount of green between 0 and 3
-	 * @param red the amount of red between 0 and 3
+	 * Creates a rgb color from a launchpad color. see
+	 * {@link #calculateColour(int, int)} for the meaning of red and green
+	 * 
+	 * @param green
+	 *            the amount of green between 0 and 3
+	 * @param red
+	 *            the amount of red between 0 and 3
 	 * @return a Color object forom the launchpad-Color
 	 */
 	public static Color lpColorToRGB(int green, int red) {
-		return new Color(255/4*red, 255/4*green, 0); 
+		return new Color(255 / 4 * red, 255 / 4 * green, 0);
 	}
 	
+	/**
+	 * This returns the name of the device. The name can only be set by the
+	 * constructor.
+	 * 
+	 * @return the launchpad midi-device name.
+	 */
+	public String getName() {
+		return name;
+	}
 }
