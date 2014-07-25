@@ -216,19 +216,23 @@ public class Launchpad implements Receiver {
 		monitor = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				while (isOpen && isConnected()) {
-					try {
-						Thread.sleep(3);
-					} catch (InterruptedException e) {}
-				}
-				if (!isConnected()) {
-					isOpen = false;
-					inputDevice.close();
-					transmitter.close();
-					outputDevice.close();
-					for (PadListener lstnr : padListeners) {
-						lstnr.padDisconnected();
+				try{
+					while (isOpen && isConnected()) {
+						try {
+							Thread.sleep(3);
+						} catch (InterruptedException e) {}
 					}
+					if (!isConnected()) {
+						isOpen = false;
+						inputDevice.close();
+						transmitter.close();
+						outputDevice.close();
+						for (PadListener lstnr : padListeners) {
+							lstnr.padDisconnected();
+						}
+					}
+				}catch(Exception e){
+					
 				}
 				
 			}
