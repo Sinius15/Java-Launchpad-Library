@@ -44,32 +44,32 @@ public class BufferedLaunchpad extends Launchpad {
 	 * already turned on on this color, than it will not send a message to the
 	 * lanchpad.
 	 * 
-	 * @param colomn
-	 *            the colomn on the launchpad where the left colomn is 0 and the
-	 *            right colomn with the round buttons is 8
+	 * @param column
+	 *            the column on the launchpad where the left column is 0 and the
+	 *            right column with the round buttons is 8
 	 * @param row
-	 *            the row on the launchpad where the top rowh with the round
+	 *            the row on the launchpad where the top row with the round
 	 *            buttons is 0 and the bottom row is 8
 	 * @param color
-	 *            the colour of the led. Values are found in the static feelds
+	 *            the color of the led. Values are found in the static fields
 	 *            in the Launchpad class
 	 * @author Sinius15
 	 */
 	@Override
-	public void setLedOn(int colomn, int row, int color) {
-		if(ledState[row][colomn] == color)
+	public void setLedOn(int column, int row, int color) {
+		if(ledState[row][column] == color)
 			return;
-		super.setLedOn(colomn, row, color);
-		ledState[row][colomn] = color;
+		super.setLedOn(column, row, color);
+		ledState[row][column] = color;
 	}
 	
 	/**
-	 * Turns off a led on the launchpad. If the butotn on the launchpad is
+	 * Turns off a led on the launchpad. If the button on the launchpad is
 	 * already turned off, than this function will not send a message to the
 	 * launchpad.
 	 * 
-	 * @param colomn
-	 *            the colomn on the launchpad where the left colomn is 0 and the
+	 * @param column
+	 *            the column on the launchpad where the left colomn is 0 and the
 	 *            right colomn with the round buttons is 8
 	 * @param row
 	 *            the row on the launchpad where the top rowh with the round
@@ -77,11 +77,11 @@ public class BufferedLaunchpad extends Launchpad {
 	 * @author Sinius15
 	 */
 	@Override
-	public void setLedOff(int colomn, int row) {
-		if(ledState[row][colomn] == COLOR_OFF)
+	public void setLedOff(int column, int row) {
+		if(ledState[row][column] == COLOR_OFF)
 			return;
-		super.setLedOff(colomn, row);
-		ledState[row][colomn] = COLOR_OFF;
+		super.setLedOff(column, row);
+		ledState[row][column] = COLOR_OFF;
 	}
 	
 	@Override
