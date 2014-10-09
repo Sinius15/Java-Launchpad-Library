@@ -17,7 +17,7 @@ public class LaunchTester implements ButtonListener{
 	public static final String name = "Launchpad S";
 	Launchpad s;
 	LaunchpadPattern patt;
-	int what = 8;
+	int what = 6;
 	
 	public LaunchTester(){
 		try {

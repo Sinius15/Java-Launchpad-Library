@@ -353,6 +353,8 @@ public class Launchpad implements Receiver {
 	 * @return <tt>true</tt> as specified by {@link Collection#add}
 	 */
 	public boolean addPadListener(PadListener listener) {
+		if (isOpen == false)
+			throw new IllegalStateException("Launchpad is not open!");
 		return this.padListeners.add(listener);
 	}
 	
@@ -385,7 +387,7 @@ public class Launchpad implements Receiver {
 	 */
 	@Override
 	public void close() {
-		if (isOpen = false)
+		if (isOpen == false)
 			throw new IllegalStateException("Launchpad was already closed or disconnected.");
 		reset();
 		isOpen = false;
