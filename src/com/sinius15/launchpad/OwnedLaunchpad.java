@@ -68,6 +68,10 @@ public class OwnedLaunchpad extends BufferedLaunchpad {
 	 * @author Sinius15
 	 */
 	public void setLedOn(int column, int row, int color, String owner) {
+		if(color == Launchpad.COLOR_OFF){
+			setLedOff(column, row, owner);
+			return;
+		}
 		buttons[row][column].owners.add(new Layer(owner, color));
 		super.setLedOn(column, row, color);
 	}
@@ -91,23 +95,28 @@ public class OwnedLaunchpad extends BufferedLaunchpad {
 		buttons[row][column].removeAllFromOnwer(owner);
 		super.setLedOn(column, row, buttons[row][column].getLastColor());
 	}
-
-	/**
-	 * Calls {@link OwnedLaunchpad#setLedOff(int, int, String)} where the user
-	 * is an empty string.
-	 */
-	@Override
-	public void setLedOff(int colomn, int row) {
-		setLedOff(colomn, row, "");
+	
+	public void clearLed(int column, int row) {
+		buttons[row][column].owners.clear();
+		super.setLedOn(column, row, buttons[row][column].getLastColor());
 	}
 
 	/**
-	 * Calls {@link OwnedLaunchpad#setLedOn(int, int, int, String)} where the
-	 * user is an empty string.
+	 * Should not use this function! Use {@link OwnedLaunchpad#setLedOff(int, int, String)} instead!
 	 */
+	@Deprecated
+	@Override
+	public void setLedOff(int colomn, int row) {
+		throw new IllegalArgumentException("should not be here!");
+	}
+
+	/**
+	 * Should not use this function! Use {@link OwnedLaunchpad#setLedOn(int, int, int, String)} instead!
+	 */
+	@Deprecated
 	@Override
 	public void setLedOn(int colomn, int row, int color) {
-		setLedOn(colomn, row, color, "");
+		throw new IllegalArgumentException("should not be here!");
 	}
 
 	/**
